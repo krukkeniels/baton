@@ -1,0 +1,114 @@
+# Baton Default Configuration
+# This file contains the default settings for Baton CLI Orchestrator
+
+# Core settings
+plan_file: "./plan.md"
+workspace: "./"
+database: "./baton.db"
+mcp_port: 8080
+
+# LLM CLI settings
+llm:
+  primary: "claude"
+  fallback: null
+  timeout_seconds: 300
+  max_retries: 1
+
+  # Claude Code configuration
+  claude:
+    command: "claude"
+    headless_args: ["-p"]
+    output_format: "stream-json"
+    mcp_connect: true
+
+  # Future: OpenAI CLI support
+  openai:
+    command: "openai"
+    headless_args: ["--non-interactive"]
+
+# Agent configuration
+agents:
+  architect:
+    name: "System Architect"
+    role: "Plans and designs system architecture"
+    allowed_states: ["ready_for_plan", "planning"]
+    routing_policy:
+      llm_preference: "claude"
+      prompt_template: "architect.md"
+    permissions:
+      can_read_plan: true
+      can_update_artifacts: true
+      can_transition_to: ["planning", "ready_for_implementation"]
+
+  developer:
+    name: "Developer"
+    role: "Implements code and fixes issues"
+    allowed_states: ["ready_for_implementation", "implementing", "fixing"]
+    routing_policy:
+      llm_preference: "claude"
+      prompt_template: "developer.md"
+    permissions:
+      can_read_plan: true
+      can_execute_commands: true
+      can_update_artifacts: true
+      can_transition_to: ["implementing", "ready_for_code_review", "needs_fixes"]
+
+  reviewer:
+    name: "Code Reviewer"
+    role: "Reviews code and provides feedback"
+    allowed_states: ["reviewing"]
+    routing_policy:
+      llm_preference: "claude"
+      prompt_template: "reviewer.md"
+    permissions:
+      can_read_artifacts: true
+      can_update_artifacts: true
+      can_transition_to: ["ready_for_commit", "needs_fixes"]
+
+# Task selection policy
+selection:
+  algorithm: "priority_dependency"
+  priority_weight: 1.0
+  dependency_strict: true
+  prefer_leaf_tasks: true
+  tie_breaker: "oldest_updated"
+
+# Completion handshake settings
+completion:
+  max_retries: 2
+  retry_delay_seconds: 5
+  timeout_seconds: 600
+  require_explicit_state_update: true
+  follow_up_template: "Are you finished? The state is not updated. Please either update the task state or provide a structured outcome with reason and next state."
+
+# Security and safety settings
+security:
+  allowed_commands:
+    - "git"
+    - "npm"
+    - "go"
+    - "python"
+    - "pytest"
+    - "cargo"
+    - "make"
+  workspace_restriction: true
+  secret_patterns:
+    - "sk-"
+    - "pk-"
+    - "token"
+    - "password"
+    - "secret"
+  redact_in_logs: true
+
+# Logging configuration
+logging:
+  level: "info"
+  format: "json"
+  file: "baton.log"
+  audit_retention_days: 90
+
+# Development settings
+development:
+  dry_run_default: false
+  debug_mcp: false
+  cycle_timebox_seconds: 3600 # 1 hour max per cycle

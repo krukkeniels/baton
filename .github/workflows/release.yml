@@ -1,0 +1,161 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version (e.g., v1.0.0)'
+        required: true
+        default: 'v1.0.0'
+
+env:
+  BINARY_NAME: baton
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        goos: [linux, darwin, windows]
+        goarch: [amd64, arm64]
+        exclude:
+          - goos: windows
+            goarch: arm64
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.21'
+
+    - name: Get version
+      id: version
+      run: |
+        if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
+          echo "version=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+        elif [[ "${{ github.event.inputs.version }}" != "" ]]; then
+          echo "version=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
+        else
+          echo "version=v$(date +%Y%m%d-%H%M%S)" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Build binary
+      env:
+        GOOS: ${{ matrix.goos }}
+        GOARCH: ${{ matrix.goarch }}
+        VERSION: ${{ steps.version.outputs.version }}
+      run: |
+        # Set binary name with extension for Windows
+        BINARY="${BINARY_NAME}"
+        if [[ "${{ matrix.goos }}" == "windows" ]]; then
+          BINARY="${BINARY}.exe"
+        fi
+
+        # Build with version info
+        go build \
+          -ldflags="-X baton/pkg/version.Version=${VERSION}" \
+          -o "dist/${BINARY_NAME}-${{ matrix.goos }}-${{ matrix.goarch }}${BINARY_NAME/baton/}" \
+          ./
+
+        # For Windows, ensure .exe extension
+        if [[ "${{ matrix.goos }}" == "windows" ]]; then
+          mv "dist/${BINARY_NAME}-${{ matrix.goos }}-${{ matrix.goarch }}" "dist/${BINARY_NAME}-${{ matrix.goos }}-${{ matrix.goarch }}.exe"
+        fi
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: binaries
+        path: dist/
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Download artifacts
+      uses: actions/download-artifact@v3
+      with:
+        name: binaries
+        path: dist/
+
+    - name: Get version
+      id: version
+      run: |
+        if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
+          echo "version=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+        elif [[ "${{ github.event.inputs.version }}" != "" ]]; then
+          echo "version=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
+        else
+          echo "version=v$(date +%Y%m%d-%H%M%S)" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Create checksums
+      run: |
+        cd dist
+        sha256sum * > checksums.txt
+        cat checksums.txt
+
+    - name: Create release
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: ${{ steps.version.outputs.version }}
+        name: Baton ${{ steps.version.outputs.version }}
+        body: |
+          # Baton CLI Orchestrator ${{ steps.version.outputs.version }}
+
+          ## Installation
+
+          ### Quick Install (Linux/macOS)
+          ```bash
+          curl -fsSL https://raw.githubusercontent.com/${{ github.repository }}/main/install.sh | bash
+          ```
+
+          ### Manual Download
+          Download the appropriate binary for your platform:
+
+          - **Linux (x64)**: `baton-linux-amd64`
+          - **Linux (ARM64)**: `baton-linux-arm64`
+          - **macOS (Intel)**: `baton-darwin-amd64`
+          - **macOS (Apple Silicon)**: `baton-darwin-arm64`
+          - **Windows (x64)**: `baton-windows-amd64.exe`
+
+          ### Verification
+          After download, verify the checksum:
+          ```bash
+          sha256sum -c checksums.txt
+          ```
+
+          ### Getting Started
+          ```bash
+          # Make executable (Linux/macOS)
+          chmod +x baton-*
+
+          # Move to PATH
+          sudo mv baton-* /usr/local/bin/baton
+
+          # Initialize workspace
+          baton init
+
+          # Get help
+          baton --help
+          ```
+
+          ## Requirements
+          - **Claude Code CLI** for LLM integration
+          - **Git** for version control features (optional)
+
+          ## What's New
+          See [CHANGELOG.md](CHANGELOG.md) for detailed changes.
+        files: |
+          dist/*
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
