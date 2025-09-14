@@ -50,22 +50,20 @@ jobs:
         GOARCH: ${{ matrix.goarch }}
         VERSION: ${{ steps.version.outputs.version }}
       run: |
-        # Set binary name with extension for Windows
-        BINARY="${BINARY_NAME}"
+        # Create dist directory
+        mkdir -p dist
+
+        # Set output filename
+        OUTPUT="dist/${BINARY_NAME}-${{ matrix.goos }}-${{ matrix.goarch }}"
         if [[ "${{ matrix.goos }}" == "windows" ]]; then
-          BINARY="${BINARY}.exe"
+          OUTPUT="${OUTPUT}.exe"
         fi
 
         # Build with version info
         go build \
           -ldflags="-X baton/pkg/version.Version=${VERSION}" \
-          -o "dist/${BINARY_NAME}-${{ matrix.goos }}-${{ matrix.goarch }}${BINARY_NAME/baton/}" \
+          -o "${OUTPUT}" \
           ./
-
-        # For Windows, ensure .exe extension
-        if [[ "${{ matrix.goos }}" == "windows" ]]; then
-          mv "dist/${BINARY_NAME}-${{ matrix.goos }}-${{ matrix.goarch }}" "dist/${BINARY_NAME}-${{ matrix.goos }}-${{ matrix.goarch }}.exe"
-        fi
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v3
