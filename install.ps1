@@ -48,7 +48,7 @@ function Install-Baton {
     }
 
     # Download URL
-    $githubRepo = "race-day/baton"
+    $githubRepo = "krukkeniels/baton"
     if ($Version -eq "latest") {
         $downloadUrl = "https://github.com/$githubRepo/releases/latest/download/baton-$platform.exe"
     } else {
@@ -151,7 +151,7 @@ if ($args.Length -gt 0) {
             Write-Host ""
             Write-Host "Examples:"
             Write-Host "  # Install latest version"
-            Write-Host "  powershell -c `"irm https://raw.githubusercontent.com/race-day/baton/main/install.ps1 | iex`""
+            Write-Host "  powershell -c `"irm https://raw.githubusercontent.com/krukkeniels/baton/main/install.ps1 | iex`""
             Write-Host ""
             Write-Host "  # Install specific version"
             Write-Host "  powershell -ExecutionPolicy Bypass -File install.ps1 --version v1.0.0"

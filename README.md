@@ -22,26 +22,26 @@ Baton is a CLI orchestrator that advances work one task state at a time through 
 
 **🚀 One-line install (Linux/macOS):**
 ```bash
-curl -fsSL https://raw.githubusercontent.com/race-day/baton/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/krukkeniels/baton/main/install.sh | bash
 ```
 
 **🪟 Windows (PowerShell):**
 ```powershell
-irm https://raw.githubusercontent.com/race-day/baton/main/install.ps1 | iex
+irm https://raw.githubusercontent.com/krukkeniels/baton/main/install.ps1 | iex
 ```
 
 **📦 Package Managers:**
 ```bash
 # Homebrew (macOS/Linux)
-brew tap race-day/tap
+brew tap krukkeniels/tap
 brew install baton
 
 # Go install (if you have Go)
-go install github.com/race-day/baton@latest
+go install github.com/krukkeniels/baton@latest
 ```
 
 **📋 Manual Download:**
-Download pre-built binaries from [GitHub Releases](https://github.com/race-day/baton/releases)
+Download pre-built binaries from [GitHub Releases](https://github.com/krukkeniels/baton/releases)
 
 ### Initialize Workspace
 

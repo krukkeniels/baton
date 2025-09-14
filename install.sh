@@ -7,7 +7,7 @@ set -e
 VERSION="latest"
 INSTALL_DIR="/usr/local/bin"
 BINARY_NAME="baton"
-GITHUB_REPO="race-day/baton"
+GITHUB_REPO="krukkeniels/baton"
 TEMP_DIR=$(mktemp -d)
 
 # Colors for output
@@ -201,8 +201,8 @@ main() {
                 echo "  --help              Show this help message"
                 echo ""
                 echo "Examples:"
-                echo "  curl -fsSL https://raw.githubusercontent.com/race-day/baton/main/install.sh | bash"
-                echo "  curl -fsSL https://raw.githubusercontent.com/race-day/baton/main/install.sh | bash -s -- --version v1.0.0"
+                echo "  curl -fsSL https://raw.githubusercontent.com/krukkeniels/baton/main/install.sh | bash"
+                echo "  curl -fsSL https://raw.githubusercontent.com/krukkeniels/baton/main/install.sh | bash -s -- --version v1.0.0"
                 echo ""
                 exit 0
                 ;;

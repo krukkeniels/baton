@@ -1,12 +1,12 @@
 class Baton < Formula
   desc "CLI Orchestrator for LLM-Driven Task Execution"
-  homepage "https://github.com/race-day/baton"
-  url "https://github.com/race-day/baton/releases/latest/download/baton-darwin-amd64"
+  homepage "https://github.com/krukkeniels/baton"
+  url "https://github.com/krukkeniels/baton/releases/latest/download/baton-darwin-amd64"
   version "1.0.0"
   sha256 "YOUR_SHA256_HERE"  # Will be updated by release automation
 
   on_arm do
-    url "https://github.com/race-day/baton/releases/latest/download/baton-darwin-arm64"
+    url "https://github.com/krukkeniels/baton/releases/latest/download/baton-darwin-arm64"
     sha256 "YOUR_ARM64_SHA256_HERE"
   end
 
@@ -28,7 +28,7 @@ class Baton < Formula
         baton init
         baton --help
 
-      Documentation: https://github.com/race-day/baton#readme
+      Documentation: https://github.com/krukkeniels/baton#readme
     EOS
   end
 end
