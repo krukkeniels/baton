@@ -11,6 +11,10 @@ on:
         required: true
         default: 'v1.0.0'
 
+permissions:
+  contents: write
+  packages: write
+
 env:
   BINARY_NAME: baton
 
@@ -102,7 +106,7 @@ jobs:
         cat checksums.txt
 
     - name: Create release
-      uses: softprops/action-gh-release@v1
+      uses: softprops/action-gh-release@v2
       with:
         tag_name: ${{ steps.version.outputs.version }}
         name: Baton ${{ steps.version.outputs.version }}
@@ -156,5 +160,3 @@ jobs:
           dist/*
         draft: false
         prerelease: false
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
