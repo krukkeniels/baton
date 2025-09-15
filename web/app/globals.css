@@ -1,0 +1,180 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 84% 4.9%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  /* Scrollbar styling for webkit browsers */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-muted/20;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-muted rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-muted-foreground/50;
+  }
+}
+
+@layer components {
+  /* Custom button styles for techy aesthetic */
+  .btn-tech {
+    @apply inline-flex items-center justify-center px-4 py-2 text-sm font-mono font-medium
+           transition-all duration-200 border border-border rounded-md
+           hover:bg-accent hover:text-accent-foreground
+           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring
+           disabled:pointer-events-none disabled:opacity-50;
+  }
+
+  .btn-tech-primary {
+    @apply btn-tech bg-primary text-primary-foreground hover:bg-primary/90;
+  }
+
+  .btn-tech-secondary {
+    @apply btn-tech bg-secondary text-secondary-foreground hover:bg-secondary/80;
+  }
+
+  .btn-tech-ghost {
+    @apply btn-tech hover:bg-accent hover:text-accent-foreground;
+  }
+
+  /* Card styles with subtle glow effect */
+  .card-tech {
+    @apply bg-card text-card-foreground border border-border rounded-lg p-4
+           shadow-sm hover:shadow-md transition-shadow duration-200;
+  }
+
+  .card-tech-glow {
+    @apply card-tech relative;
+  }
+
+  .card-tech-glow::before {
+    content: '';
+    @apply absolute inset-0 rounded-lg bg-gradient-to-r from-primary/5 to-secondary/5
+           opacity-0 transition-opacity duration-300;
+  }
+
+  .card-tech-glow:hover::before {
+    @apply opacity-100;
+  }
+
+  /* State-specific styling */
+  .task-card {
+    @apply card-tech-glow border-l-4 transition-all duration-200;
+  }
+
+  .task-card[data-state="ready_for_plan"] {
+    @apply border-l-state-ready-plan;
+  }
+
+  .task-card[data-state="planning"] {
+    @apply border-l-state-planning;
+  }
+
+  .task-card[data-state="ready_for_implementation"] {
+    @apply border-l-state-ready-impl;
+  }
+
+  .task-card[data-state="implementing"] {
+    @apply border-l-state-implementing;
+  }
+
+  .task-card[data-state="ready_for_code_review"] {
+    @apply border-l-state-ready-review;
+  }
+
+  .task-card[data-state="reviewing"] {
+    @apply border-l-state-reviewing;
+  }
+
+  .task-card[data-state="ready_for_commit"] {
+    @apply border-l-state-ready-commit;
+  }
+
+  .task-card[data-state="committing"] {
+    @apply border-l-state-committing;
+  }
+
+  .task-card[data-state="needs_fixes"] {
+    @apply border-l-state-needs-fixes;
+  }
+
+  .task-card[data-state="fixing"] {
+    @apply border-l-state-fixing;
+  }
+
+  .task-card[data-state="DONE"] {
+    @apply border-l-state-done;
+  }
+
+  /* Input styles */
+  .input-tech {
+    @apply flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm
+           ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium
+           placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2
+           focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed
+           disabled:opacity-50;
+  }
+
+  /* Badge styles for priority and tags */
+  .badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+
+  .badge-priority {
+    @apply badge;
+  }
+
+  .badge-priority-low {
+    @apply badge-priority bg-blue-500/10 text-blue-400 border border-blue-500/20;
+  }
+
+  .badge-priority-medium {
+    @apply badge-priority bg-yellow-500/10 text-yellow-400 border border-yellow-500/20;
+  }
+
+  .badge-priority-high {
+    @apply badge-priority bg-red-500/10 text-red-400 border border-red-500/20;
+  }
+
+  .badge-tag {
+    @apply badge bg-secondary/50 text-secondary-foreground border border-secondary;
+  }
+}

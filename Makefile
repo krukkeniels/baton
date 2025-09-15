@@ -68,3 +68,23 @@ run-start:
 sample-tasks:
 	./$(BINARY_NAME) init
 	./$(BINARY_NAME) ingest plan.md
+
+# Web UI build commands
+web-deps:
+	cd web && npm install
+
+web-dev:
+	cd web && npm run dev
+
+web-build:
+	cd web && npm run build
+
+web-build-deps: web-deps web-build
+
+# Complete build including web UI
+build-all: build web-build-deps
+
+# Development with web UI
+dev-web: build web-deps
+	./$(BINARY_NAME) web --dev --port 3001 &
+	cd web && npm run dev
